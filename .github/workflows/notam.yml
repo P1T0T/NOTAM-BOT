@@ -1,0 +1,42 @@
+name: NOTAM
+
+on:
+  schedule:
+    # Co 30 minut, w 7. i 37. minucie (unikamy pełnych godzin - wtedy GitHub jest przeciążony).
+    # Repo PUBLICZNE możesz przestawić na co 15 min: "3,18,33,48 * * * *"
+    - cron: "7,37 * * * *"
+  workflow_dispatch:  # przycisk "Run workflow" do ręcznego uruchamiania
+
+permissions:
+  contents: write  # potrzebne, żeby zapisać plik z pamięcią (notam_seen.db)
+
+concurrency:
+  group: notam
+  cancel-in-progress: false  # dwa przebiegi nigdy nie działają jednocześnie
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalacja
+        run: pip install requests
+
+      - name: Sprawdź NOTAMy i wyślij nowe na Discorda
+        env:
+          NOTAM_WEBHOOK_URL: ${{ secrets.NOTAM_WEBHOOK_URL }}
+        run: python notam_bot.py --once
+
+      - name: Zapisz pamięć (co już wysłano)
+        if: always()
+        run: |
+          git config user.name "notam-bot"
+          git config user.email "notam-bot@users.noreply.github.com"
+          [ -f notam_seen.db ] && git add notam_seen.db
+          if ! git diff --cached --quiet; then
+            git commit -m "aktualizacja listy znanych NOTAMów"
+            git pull --rebase
+            git push
+          fi
