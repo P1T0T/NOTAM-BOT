@@ -2,10 +2,10 @@ name: NOTAM
 
 on:
   schedule:
-    # Co 30 minut, w 7. i 37. minucie (unikamy pełnych godzin - wtedy GitHub jest przeciążony).
-    # Repo PUBLICZNE możesz przestawić na co 15 min: "3,18,33,48 * * * *"
-    - cron: "7,37 * * * *"
-  workflow_dispatch:  # przycisk "Run workflow" do ręcznego uruchamiania
+    # Składnia "*/15" informuje system o gotowości do uruchomienia co 15 minut. 
+    # GitHub uruchomi go automatycznie w optymalnym dla siebie momencie.
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write  # potrzebne, żeby zapisać plik z pamięcią (notam_seen.db)
