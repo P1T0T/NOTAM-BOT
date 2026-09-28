@@ -53,7 +53,7 @@ LOTNISKA = [
 ]
 
 # Co ile minut sprawdzać (nie schodź poniżej 10, żeby nie męczyć serwera FAA)
-CO_ILE_MINUT = 30
+CO_ILE_MINUT = 15
 
 # Plik z pamięcią "co już wysłałem"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
