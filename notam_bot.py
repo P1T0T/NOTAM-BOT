@@ -439,7 +439,32 @@ def open_db(path):
     conn.execute(SCHEMA_SEEN)
     conn.execute("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT)")
     conn.commit()
+    _migrate_seen(conn)
     return conn
+
+
+def _migrate_seen(conn):
+    """Dogania starszy plik notam_seen.db (sprzed dodania filtra/wygasania) do
+    aktualnego schematu - dopisuje brakujące kolumny, nic nie kasuje."""
+    have = {row[1] for row in conn.execute("PRAGMA table_info(seen)")}
+    want = {
+        "icao": "TEXT",
+        "number": "TEXT",
+        "text": "TEXT",
+        "start_raw": "TEXT",
+        "end_raw": "TEXT",
+        "was_sent": "INTEGER DEFAULT 0",
+        "message_id": "TEXT",
+        "expired": "INTEGER DEFAULT 0",
+    }
+    changed = False
+    for col, coltype in want.items():
+        if col not in have:
+            conn.execute(f"ALTER TABLE seen ADD COLUMN {col} {coltype}")
+            changed = True
+    if changed:
+        conn.commit()
+        log.info("Baza notam_seen.db zaktualizowana do nowego schematu (dodano brakujące kolumny).")
 
 
 def get_meta(conn, key, default="0"):
