@@ -33,7 +33,7 @@ import requests
 # =====================================================================
 
 # Link do webhooka z Discorda (wklej między cudzysłowy, nikomu go nie pokazuj!)
-WEBHOOK_URL = os.environ.get("NOTAM_WEBHOOK_URL") or "WKLEJ_TUTAJ_LINK_DO_WEBHOOKA"
+WEBHOOK_URL = os.environ.get("NOTAM_WEBHOOK_URL") or "https://discord.com/api/webhooks/1554166924945133710/9MpVaZjHInKde1PUMFm2tSVmYPB4kGQhX3u7UQ7E4cZLK2U3Bc7i4Q5jnYgkMlvILgFs"
 # (Na GitHubie link jest w sekrecie NOTAM_WEBHOOK_URL - wtedy nic tu nie wklejasz.)
 
 # Lotniska (kody ICAO). Dodawaj / usuwaj śmiało.
